@@ -1,0 +1,31 @@
+{
+  "kind": "singleType",
+  "collectionName": "oms",
+  "info": {
+    "name": "Om"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "overskrift": {
+      "type": "string"
+    },
+    "om": {
+      "type": "richtext"
+    },
+    "bilde": {
+      "model": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ],
+      "plugin": "upload",
+      "required": false
+    }
+  }
+}

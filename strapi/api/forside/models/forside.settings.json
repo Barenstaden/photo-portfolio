@@ -1,0 +1,32 @@
+{
+  "kind": "singleType",
+  "collectionName": "forsides",
+  "info": {
+    "name": "Forside",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "overskrift": {
+      "type": "string"
+    },
+    "bakgrunnsbilde": {
+      "model": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ],
+      "plugin": "upload",
+      "required": false
+    },
+    "album": {
+      "model": "album"
+    }
+  }
+}
