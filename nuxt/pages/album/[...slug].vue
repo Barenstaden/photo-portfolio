@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 
-import MasonryAlbum from "~/componets/MasonryAlbum.vue";
+import MasonryAlbum from "~/components/MasonryAlbum.vue";
 
 const album = ref();
 const route = useRoute();
