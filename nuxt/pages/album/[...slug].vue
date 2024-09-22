@@ -1,7 +1,7 @@
 <template>
-  <div class="w-full h-[60vh] bg-cover bg-center relative"
+  <div class="w-full h-64 lg:h-[60vh] bg-cover bg-center relative"
        :style="{backgroundImage: `url(${album?.cover?.image?.url})`}">
-    <h1 class="text-white text-5xl font-bold absolute inset-0 flex justify-center items-center">
+    <h1 class="text-white text-3xl md:text-4xl lg:text-5xl font-bold absolute inset-0 flex justify-center items-center">
       {{ album?.title }}
     </h1>
   </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="gap-4 mt-12 px-4 columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5">
+  <div class="gap-4 mt-4 px-4 columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5">
     <a class="relative mb-4" :href="`/${link}/${image.url}`" v-for="(image, index) in images" :key="image.id">
       <img class="mb-4 w-full rounded-lg"
            :class="{

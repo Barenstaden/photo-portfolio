@@ -1,9 +1,9 @@
 <template>
   <div class="grid gap-2 p-4 md:grid-cols-3 lg:grid-cols-4">
 
-    <div class="md:col-span-2 lg:col-span-3 px-4 h-[85vh]">
+    <div class="md:col-span-2 lg:col-span-3 lg:h-[85vh]">
 
-        <img class="h-full shadow-sm mx-auto object-contain rounded align-top" :src="image.image.url" alt="">
+        <img class="h-64 lg:h-full shadow-sm mx-auto object-contain rounded align-top" :src="image.image.url" alt="">
         <div :class="`max-w-[${image.image.width}px]`" class="flex justify-between mt-2 bg-white">
           <button class="disabled:text-gray-200 text-blue-500" :disabled="!prevImage"
                   @click="navigateTo(`/image/${prevImage?.url}`)">Forrige
@@ -15,7 +15,7 @@
 
     </div>
 
-    <div class="p-4 bg-gray-100 rounded-lg shadow-sm max-h-[85vh] overflow-scroll">
+    <div class="p-4 bg-gray-100 rounded-lg shadow-sm max-h-64 lg:max-h-[85vh] overflow-scroll">
       <div class="">
         <h1 class="font-bold">{{ image.title }}</h1>
         <p class="text-sm">{{ image.description }}</p>

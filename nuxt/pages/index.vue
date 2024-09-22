@@ -1,8 +1,8 @@
 <template>
   <div class="grid gap-4 mb-10">
-    <div class="w-full h-[60vh] bg-cover bg-center relative"
+    <div class="w-full h-64 lg:h-[60vh] bg-cover bg-center relative px-10"
          style="background-image: url('images/bakgrunnsbilde.jpg');">
-      <h1 class="text-white text-5xl font-bold absolute inset-0 flex justify-center items-center">
+      <h1 class="text-white text-3xl md:text-4xl lg:text-5xl font-bold absolute inset-0 flex justify-center items-center">
         Øyvind Bjørnstad foto
       </h1>
     </div>
