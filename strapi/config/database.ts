@@ -51,7 +51,6 @@ export default ({ env }) => {
       connection: {
         connectionString: env('DATABASE_URL'),
         ssl: {
-          ca: env('DATABASE_SSL_CA', undefined),
           rejectUnauthorized: env.bool(
             'DATABASE_SSL_REJECT_UNAUTHORIZED',
             true
