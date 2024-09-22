@@ -15,11 +15,11 @@
     "nuxt": "^3.13.0",
     "vue": "latest",
     "vue-observe-visibility": "^2.0.0-alpha.1",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "tailwindcss": "^3.4.12"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.12"
+    "postcss": "^8.4.47"
   }
 }
