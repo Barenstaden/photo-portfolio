@@ -1,26 +1,23 @@
 <template>
-  <div class="grid gap-2 p-4 md:grid-cols-3 lg:grid-cols-4">
+  <div class="sm:flex justify-between">
 
-    <div class="md:col-span-2 lg:col-span-3 lg:h-[85vh]">
+    <div class="mx-auto pt-4">
 
-        <img class="h-64 lg:h-full shadow-sm mx-auto object-contain rounded align-top" :src="image.image.url" alt="">
-        <div :class="`max-w-[${image.image.width}px]`" class="flex justify-between mt-2 bg-white">
-          <button class="disabled:text-gray-200 text-blue-500" :disabled="!prevImage"
-                  @click="navigateTo(`/image/${prevImage?.url}`)">Forrige
-          </button>
-          <button class="disabled:text-gray-200 text-blue-500" :disabled="!nextImage"
-                  @click="navigateTo(`/image/${nextImage?.url}`)">Neste
-          </button>
-        </div>
+      <img class="h-auto md:h-[70vh] lg:h-[80vh] xl:h-[88vh] shadow-sm mx-auto object-contain rounded align-top" :src="image.image.url" alt="">
+      <div :class="`max-h-[${image.image.height}px]`" class="flex justify-between mt-2 bg-white">
+        <button class="disabled:text-gray-200 text-blue-500" :disabled="!prevImage"
+                @click="navigateTo(`/image/${prevImage?.url}`)">Forrige
+        </button>
+        <button class="disabled:text-gray-200 text-blue-500" :disabled="!nextImage"
+                @click="navigateTo(`/image/${nextImage?.url}`)">Neste
+        </button>
+      </div>
 
     </div>
 
-    <div class="p-4 bg-gray-100 rounded-lg shadow-sm max-h-64 lg:max-h-[85vh] overflow-scroll">
-      <div class="">
-        <h1 class="font-bold">{{ image.title }}</h1>
-        <p class="text-sm">{{ image.description }}</p>
-      </div>
-
+    <div class="w-full sm:w-72 p-4 bg-gray-100 h-lvh overflow-y-auto">
+      <h1 class="font-bold">{{ image.title }}</h1>
+      <p class="text-sm">{{ image.description }}</p>
       <div class="mt-4 text-gray-600">
         <h2 class="font-bold ">Kommentarer</h2>
         <div v-if="!image.comments.length">
@@ -37,7 +34,8 @@
 
       <div v-if="!commentSaved && !error" class="text-gray-600 mt-4">
         <form @submit.prevent="postComment" class="grid gap-2 text-sm">
-          <textarea v-model="comment" required class="w-full border-2 rounded-lg p-2" rows="3" placeholder="Skriv en kommentar"></textarea>
+          <textarea v-model="comment" required class="w-full border-2 rounded-lg p-2" rows="3"
+                    placeholder="Skriv en kommentar"></textarea>
           <input v-model="name" required type="text" placeholder="Navn" class="w-full border-2 rounded-lg p-2">
           <Button type="submit">Lagre</Button>
         </form>
@@ -86,7 +84,7 @@ try {
 
 const postComment = async () => {
   try {
-    const { data } = await $fetch('/api/comments', {
+    const {data} = await $fetch('/api/comments', {
       method: 'POST',
       body: JSON.stringify({
         data: {
