@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "albums",
+  "info": {
+    "singularName": "album",
+    "pluralName": "albums",
+    "displayName": "Album",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "unique": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "images": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::image.image",
+      "mappedBy": "album"
+    },
+    "url": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "cover": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::image.image"
+    }
+  }
+}
