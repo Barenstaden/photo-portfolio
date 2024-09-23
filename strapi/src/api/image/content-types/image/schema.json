@@ -29,12 +29,6 @@
         "audios"
       ]
     },
-    "album": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::album.album",
-      "inversedBy": "images"
-    },
     "url": {
       "type": "uid",
       "targetField": "title"
@@ -44,6 +38,12 @@
       "relation": "oneToMany",
       "target": "api::comment.comment",
       "mappedBy": "image"
+    },
+    "album": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::album.album",
+      "inversedBy": "images"
     }
   }
 }

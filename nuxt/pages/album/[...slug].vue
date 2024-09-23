@@ -18,6 +18,7 @@ const route = useRoute();
 const page = ref(6);
 try {
   const {data} = await useFetch(`/api/albums/${route.params.slug[0]}`)
+  console.log(data.value)
   album.value = data?.value?.data;
 } catch (e) {
   console.log(e)

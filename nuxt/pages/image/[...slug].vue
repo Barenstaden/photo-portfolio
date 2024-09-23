@@ -15,7 +15,7 @@
 
     </div>
 
-    <div class="w-full sm:w-72 p-4 bg-gray-100 h-lvh overflow-y-auto">
+    <div class="w-full sm:w-72 p-4 h-[94vh] bg-gray-100 overflow-y-auto">
       <h1 class="font-bold">{{ image.title }}</h1>
       <p class="text-sm">{{ image.description }}</p>
       <div class="mt-4 text-gray-600">

@@ -12,10 +12,9 @@ export default factories.createCoreController('api::album.album', ({strapi}) => 
         ...ctx.query,
         populate: {
           cover: {
-            populate: 'image'
+            populate: ['image']
           }
         }
-
       }
     });
   },
@@ -30,11 +29,10 @@ export default factories.createCoreController('api::album.album', ({strapi}) => 
         },
         populate: {
           cover: {
-            populate: 'image'
+            populate: ['image']
           },
           images: {
-            populate: 'image',
-            orderBy: 'id'
+            populate: ['image'],
           }
         }
       }

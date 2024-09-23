@@ -1,17 +1,27 @@
-module.exports = ({env}) => ({
+export default ({env}) => ({
   upload: {
-    limits: {
-      filesize: 2000000,
-    },
-    provider: env('UPLOAD_PROVIDER', 'local'),
-    providerOptions: env('DO_SPACE_ACCESS_KEY', false) &&  {
-      sizeLimit: 2000000,
-      key: env('DO_SPACE_ACCESS_KEY'),
-      secret: env('DO_SPACE_SECRET_KEY'),
-      endpoint: env('DO_SPACE_ENDPOINT'),
-      space: env('DO_SPACE_BUCKET'),
-      directory: env('DO_SPACE_DIRECTORY'),
-      cdn: env('DO_SPACE_CDN'),
+    config: {
+      provider: env('UPLOAD_PROVIDER', 'local'),
+      providerOptions: env('UPLOAD_PROVIDER') && {
+        baseUrl: env('DO_CDN'),
+        rootPath: env('DO_FOLDER'),
+        s3Options: {
+          credentials: {
+            accessKeyId: env('DO_ACCESS_KEY'),
+            secretAccessKey: env('DO_SECRET_KEY'),
+          },
+          region: env('DO_REGION'),
+          params: {
+            Bucket: env('DO_BUCKET'),
+          },
+          endpoint: env('DO_ENDPOINT')
+        },
+      },
+      actionOptions: {
+        upload: {},
+        uploadStream: {},
+        delete: {},
+      },
     },
   },
 });

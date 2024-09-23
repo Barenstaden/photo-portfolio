@@ -23,19 +23,12 @@ export default factories.createCoreController('api::image.image', ({strapi}) => 
           }
         },
         populate: {
-          image: {
-            populate: 'media'
-          },
+          image: true,
           comments: true,
           album: {
             populate: {
               images: {
-                populate: {
-                  image: {
-                    populate: 'media'
-                  }
-                },
-                orderBy: 'id'
+                populate: ['image']
               }
             },
           }

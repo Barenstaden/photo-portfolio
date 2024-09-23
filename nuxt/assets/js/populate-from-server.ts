@@ -1,8 +1,8 @@
 export const populate = async () => {
-
+  const url = '';
   const oldAlbums = await $fetch('http://161.35.212.50/s/albums');
 
-  for await (const album of oldAlbums) {
+  for await (const album of [oldAlbums[6]]) {
     const newAlbum = {
       title: album.title,
       description: album.description,
@@ -18,7 +18,7 @@ export const populate = async () => {
           formData.append('files', blob, image.image.image.name); // 'files' er Strapi's forventede form
 
           // Last opp bildet til Strapi
-          return fetch(`https://urchin-app-or5ck.ondigitalocean.app/api/upload`, {
+          return fetch(`${url}/api/upload`, {
             method: 'POST',
             body: formData
           }).then(res => res.json())
@@ -28,7 +28,7 @@ export const populate = async () => {
         description: image.image.description,
         image: uploadedImage[0].id
       }
-      const {data} = await fetch(`https://urchin-app-or5ck.ondigitalocean.app/api/images`, {
+      const {data} = await fetch(`${url}/api/images`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', // VIKTIG: Angir at du sender JSON-data
@@ -39,23 +39,23 @@ export const populate = async () => {
       const imageData = await $fetch('http://161.35.212.50/s/images/' + image.image.id);
       for await (const comment of imageData.comments) {
         console.log(comment)
-        await $fetch('https://urchin-app-or5ck.ondigitalocean.app/api/comments', {
+        await $fetch(`${url}/api/comments`, {
           method: 'POST',
           body: JSON.stringify({
             data: {
-              createdAt: comment.createdAt,
               comment: comment.comment,
               name: comment.name,
-              image: data.id
+              image: {set: data.id}
             }
           })
         })
       }
       newImageArray.push(data.id);
     }
-    newAlbum.images = newImageArray;
+    newAlbum.images = {set: newImageArray};
+    newAlbum.cover = {set: newImageArray[0]}
 
-    const albumRes = await fetch(`https://urchin-app-or5ck.ondigitalocean.app/api/albums`, {
+    const albumRes = await fetch(`${url}/api/albums`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json', // VIKTIG: Angir at du sender JSON-data
