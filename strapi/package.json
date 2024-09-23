@@ -23,6 +23,7 @@
     "react-router-dom": "5.3.4",
     "strapi-plugin-transformer": "^3.1.2",
     "strapi-plugin-untransform-response": "^0.1.7",
+    "strapi-provider-upload-do": "^3.6.9",
     "styled-components": "5.3.3"
   },
   "author": {

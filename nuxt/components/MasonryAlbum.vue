@@ -9,10 +9,9 @@
            :width="image.image.formats.small.width"
            :height="image.image.formats.small.height"
            :src="loadedImages[index] ? image.image.formats.small.url : image.image.formats.thumbnail.url" >
-      <h2
-        class="absolute rounded-lg inset-0 flex items-center justify-center text-white text-2xl font-bold bg-black bg-opacity-0 hover:bg-opacity-75 transform duration-150 opacity-0 hover:opacity-75">
-        {{ image.title }}
-      </h2>
+      <div
+        class="absolute rounded-lg inset-0 flex items-center justify-center text-white text-2xl font-bold bg-black bg-opacity-0 hover:bg-opacity-50 transform duration-150 opacity-0 hover:opacity-75">
+      </div>
     </a>
   </div>
   <div v-observe-visibility="visibilityChanged"></div>
@@ -29,7 +28,7 @@ interface IImageFormat {
   }
 }
 
-const {link, images} = defineProps<{
+const {link, images, useTitle} = defineProps<{
   link: string,
   images: {
     id: number

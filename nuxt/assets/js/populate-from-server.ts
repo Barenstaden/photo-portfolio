@@ -18,7 +18,7 @@ export const populate = async () => {
           formData.append('files', blob, image.image.image.name); // 'files' er Strapi's forventede form
 
           // Last opp bildet til Strapi
-          return fetch(`/api/upload`, {
+          return fetch(`https://urchin-app-or5ck.ondigitalocean.app/api/upload`, {
             method: 'POST',
             body: formData
           }).then(res => res.json())
@@ -28,7 +28,7 @@ export const populate = async () => {
         description: image.image.description,
         image: uploadedImage[0].id
       }
-      const {data} = await fetch(`/api/images`, {
+      const {data} = await fetch(`https://urchin-app-or5ck.ondigitalocean.app/api/images`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', // VIKTIG: Angir at du sender JSON-data
@@ -39,7 +39,7 @@ export const populate = async () => {
       const imageData = await $fetch('http://161.35.212.50/s/images/' + image.image.id);
       for await (const comment of imageData.comments) {
         console.log(comment)
-        await $fetch('/api/comments', {
+        await $fetch('https://urchin-app-or5ck.ondigitalocean.app/api/comments', {
           method: 'POST',
           body: JSON.stringify({
             data: {
@@ -55,7 +55,7 @@ export const populate = async () => {
     }
     newAlbum.images = newImageArray;
 
-    const albumRes = await fetch(`/api/albums`, {
+    const albumRes = await fetch(`https://urchin-app-or5ck.ondigitalocean.app/api/albums`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json', // VIKTIG: Angir at du sender JSON-data
