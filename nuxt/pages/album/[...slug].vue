@@ -5,21 +5,23 @@
       {{ album?.title }}
     </h1>
   </div>
-  <MasonryAlbum :images="album.images" link="image"/>
+  <MasonryAlbum :albumId="album.documentId" :images="album.images" link="image"/>
 
 </template>
 
 <script setup lang="ts">
 
 import MasonryAlbum from "~/components/MasonryAlbum.vue";
+import { ApiAlbumAlbum} from "../../../strapi/types/generated/contentTypes";
+
+const { findOne } = useStrapi();
+const route = useRoute();
 
 const album = ref();
-const route = useRoute();
 const page = ref(6);
 try {
-  const {data} = await useFetch(`/api/albums/${route.params.slug[0]}`)
-  console.log(data.value)
-  album.value = data?.value?.data;
+  const {data} = await findOne<ApiAlbumAlbum>(`albums`, route.params.slug[0])
+  album.value = data;
 } catch (e) {
   console.log(e)
 }

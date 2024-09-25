@@ -1,8 +1,8 @@
 export const populate = async () => {
   const url = '';
-  const oldAlbums = await $fetch('http://161.35.212.50/s/albums');
+  const oldAlbums: [] = await $fetch('http://161.35.212.50/s/albums');
 
-  for await (const album of [oldAlbums[6]]) {
+  for await (const album of oldAlbums) {
     const newAlbum = {
       title: album.title,
       description: album.description,
@@ -10,18 +10,19 @@ export const populate = async () => {
     }
 
     const newImageArray = [];
-    for await (const image of album.images) {
+    for await (const image of album?.images) {
 
       const uploadedImage = await fetch('http://161.35.212.50/s/' + image.image.image.url, { signal: AbortSignal.timeout(20000) }).then(response => response.blob())
-        .then((blob => {
+        .then((async blob => {
           const formData = new FormData();
           formData.append('files', blob, image.image.image.name); // 'files' er Strapi's forventede form
 
           // Last opp bildet til Strapi
-          return fetch(`${url}/api/upload`, {
+          const res = await fetch(`${url}/api/upload`, {
             method: 'POST',
             body: formData
-          }).then(res => res.json())
+          });
+          return await res.json();
         }))
       const newImage = {
         title: image.image.title,
@@ -37,7 +38,7 @@ export const populate = async () => {
       }).then(res => res.json())
 
       const imageData = await $fetch('http://161.35.212.50/s/images/' + image.image.id);
-      for await (const comment of imageData.comments) {
+      for await (const comment of imageData?.comments) {
         console.log(comment)
         await $fetch(`${url}/api/comments`, {
           method: 'POST',

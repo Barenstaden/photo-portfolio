@@ -502,6 +502,7 @@ export interface ApiAlbumAlbum extends Struct.CollectionTypeSchema {
     images: Schema.Attribute.Relation<'oneToMany', 'api::image.image'>;
     url: Schema.Attribute.UID<'title'>;
     cover: Schema.Attribute.Relation<'oneToOne', 'api::image.image'>;
+    order: Schema.Attribute.Integer;
     createdAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     publishedAt: Schema.Attribute.DateTime;

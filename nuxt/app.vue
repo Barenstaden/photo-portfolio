@@ -1,14 +1,15 @@
 <template>
   <NuxtLayout>
-    <NuxtPage />
+    <NuxtPage/>
   </NuxtLayout>
 </template>
 
 
 <script lang="ts" setup>
-  import {populate} from "assets/js/populate-from-server";
+  const user = useState('user');
+  const {fetchUser} = useStrapiAuth()
 
-  onMounted(() => {
-    // populate();
+  await callOnce(async () => {
+    user.value = await fetchUser()
   })
 </script>

@@ -2,16 +2,16 @@
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
-      baseURL: process.env.BASE_URL || 'https://localhost:1337',
+      baseURL: process.env.STRAPI_URL || 'https://localhost:1337',
     },
   },
 
   routeRules: {
     '/api/**': {
-      proxy: `${process.env.BASE_URL}/api/**`
+      proxy: `${process.env.STRAPI_URL}/api/**`
     },
     '/uploads/**': {
-      proxy: `${process.env.BASE_URL}/uploads/**`
+      proxy: `${process.env.STRAPI_URL}/uploads/**`
     }
   },
 
@@ -28,5 +28,23 @@ export default defineNuxtConfig({
       tailwindcss: {},
       autoprefixer: {},
     },
+  },
+
+  modules: ['@nuxtjs/strapi'],
+  strapi: {
+    url: process.env.STRAPI_URL || 'http://localhost:1337',
+    prefix: '/api',
+    admin: '/admin',
+    version: 'v4',
+    cookie: {
+      path: '/',
+      maxAge: 14 * 24 * 60 * 60,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: true
+    },
+    auth: {
+      populate: ['role']
+    },
+    cookieName: 'strapi_jwt'
   }
 })

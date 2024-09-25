@@ -33,6 +33,9 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::image.image"
+    },
+    "order": {
+      "type": "integer"
     }
   }
 }

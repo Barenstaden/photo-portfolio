@@ -29,7 +29,8 @@ export default factories.createCoreController('api::image.image', ({strapi}) => 
             populate: {
               images: {
                 populate: ['image']
-              }
+              },
+              cover: true
             },
           }
         }
