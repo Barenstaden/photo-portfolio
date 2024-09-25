@@ -55,7 +55,7 @@ const user = useState('user');
 const editMode = useState('editMode')
 const {update} = useStrapi()
 
-const albums = ref<ApiAlbumAlbum>();
+const albums = ref<ApiAlbumAlbum[]>([]);
 const images = ref();
 try {
   const {data} = await find<ApiAlbumAlbum>(`albums`, {
