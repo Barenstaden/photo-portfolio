@@ -5,7 +5,7 @@
       {{ album?.title }}
     </h1>
   </div>
-  <MasonryAlbum :albumId="album.documentId" :images="album.images" link="image"/>
+  <MasonryAlbum :albumId="album?.documentId" :images="album.images" link="image"/>
 
 </template>
 
@@ -23,6 +23,6 @@ try {
   const {data} = await findOne<ApiAlbumAlbum>(`albums`, route.params.slug[0])
   album.value = data;
 } catch (e) {
-  console.log(e)
+  // console.log(e)
 }
 </script>

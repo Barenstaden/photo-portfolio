@@ -1,9 +1,8 @@
 <template>
-  <div class="md:flex justify-between">
-
+  <div class="md:flex justify-between" v-if="image">
     <div class="mx-auto px-4 pt-4">
 
-      <img class="h-auto md:h-[70vh] lg:h-[80vh] xl:h-[88vh] mx-auto object-contain rounded" :src="image.image.url" alt="">
+      <img class="h-auto md:h-[70vh] lg:h-[80vh] xl:h-[88vh] mx-auto object-contain rounded" :src="image?.image.url" alt="">
       <div class="flex justify-between mt-2">
         <Button class="disabled:text-gray-200 text-blue-500" :disabled="!prevImage"
                 @click="navigateTo(`/image/${prevImage?.url}`)">Forrige
@@ -17,18 +16,18 @@
 
     <div class="w-full md:w-72 p-4 md:h-[94vh] bg-gray-100 md:overflow-y-auto">
       <div class="grid">
-        <h1 class="font-bold">{{ image.title }}</h1>
-        <p class="text-sm">{{ image.description }}</p>
-        <NuxtLink :to="`/album/${image.album.url}`" class="text-blue-500">{{image.album.title}}</NuxtLink>
+        <h1 class="font-bold">{{ image?.title }}</h1>
+        <p class="text-sm">{{ image?.description }}</p>
+        <NuxtLink :to="`/album/${image?.album.url}`" class="text-blue-500">{{image?.album.title}}</NuxtLink>
       </div>
-      <Button v-if="user?.role.type === 'owner' && editMode" :disabled="image.documentId === image.album.cover?.documentId" @click="setCoverImage" class="mt-2">Sett som hovedbilde</Button>
+      <Button v-if="user?.role.type === 'owner' && editMode" :disabled="image?.documentId === image?.album.cover?.documentId" @click="setCoverImage" class="mt-2">Sett som hovedbilde</Button>
       <div class="mt-4 text-gray-600">
         <h2 class="font-bold ">Kommentarer</h2>
-        <div v-if="!image.comments.length">
+        <div v-if="!image?.comments.length">
           <p class="text-sm">Ingen kommentarer enda</p>
         </div>
         <div class="grid gap-2 text-sm">
-          <div class="p-4 bg-white shadow-md rounded-lg" v-for="comment in image.comments"
+          <div class="p-4 bg-white shadow-md rounded-lg" v-for="comment in image?.comments"
                :key="comment.id">
             <p>{{ comment.comment }}</p>
             <p class="font-bold text-xs">- {{ comment.name }}</p>
@@ -50,10 +49,16 @@
     </div>
   </div>
 
-  <div class="grid lg:mt-10">
+  <div class="grid lg:mt-10" v-if="image?.album">
     <h2 class="text-2xl mx-auto">Flere bilder fra albumet</h2>
-    <MasonryAlbum :album-id="image.album.documentId" :images="image.album.images" link="image"/>
+    <MasonryAlbum :album-id="image?.album.documentId" :images="image?.album.images" link="image"/>
   </div>
+
+  <div v-if="!image" class="grid h-lvh place-content-center gap-4">
+    <h1 class="m-auto text-2xl">Dette bildet finnes ikke</h1>
+    <Button><nuxt-link to="/">Gå til forsiden</nuxt-link></Button>
+  </div>
+
 
 </template>
 
@@ -87,7 +92,7 @@ try {
   nextImage.value = images.find((img, i) => i > currentImageIndex)
   prevImage.value = images.find((img, i) => i === currentImageIndex - 1)
 } catch (e) {
-  console.log(e)
+  image.value = null;
 }
 
 const postComment = async () => {
@@ -106,7 +111,6 @@ const postComment = async () => {
     image.value.comments.push(data);
   } catch (e) {
     error.value = true;
-    console.error(e)
   }
 }
 
@@ -117,7 +121,6 @@ const setCoverImage = async () => {
     })
     image.value.album.cover.documentId = image.value.documentId;
   } catch (e) {
-    console.log(e)
   }
 }
 </script>

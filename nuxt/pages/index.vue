@@ -57,10 +57,14 @@ const {update} = useStrapi()
 
 const albums = ref<ApiAlbumAlbum>();
 const images = ref();
-const {data} = await find<ApiAlbumAlbum>(`albums`, {
-  sort: 'order'
-})
-albums.value = data;
+try {
+  const {data} = await find<ApiAlbumAlbum>(`albums`, {
+    sort: 'order'
+  })
+  albums.value = data;
+} catch (e) {
+  console.log(e)
+}
 
 const container = ref<HTMLDivElement | null>(null)
 watch(editMode, () => {
