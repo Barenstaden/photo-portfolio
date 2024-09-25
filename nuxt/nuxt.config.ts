@@ -7,9 +7,6 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    '/api/**': {
-      proxy: `${process.env.STRAPI_URL}/api/**`
-    },
     '/uploads/**': {
       proxy: `${process.env.STRAPI_URL}/uploads/**`
     }
