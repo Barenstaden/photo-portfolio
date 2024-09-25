@@ -13,8 +13,8 @@
 </template>
 <script setup lang="ts">
 const {login} = useStrapiAuth();
-const email = ref('justsendto@me.com');
-const password = ref('InnTilOyv1')
+const email = ref('');
+const password = ref('')
 const user = useState('user')
 const router = useRouter()
 const submitLogin = async () => {
