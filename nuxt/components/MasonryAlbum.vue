@@ -45,11 +45,15 @@ const initSwapy = async () => {
       if (timeout) clearTimeout(timeout);
       timeout = setTimeout(async () => {
         const ids = data.array.map(({itemId}) => itemId);
-        await update<ApiAlbumAlbum>('albums', albumId, {
-          images: {
-            set: ids
-          }
-        })
+        try {
+          await update<ApiAlbumAlbum>('albums', albumId, {
+            images: {
+              set: ids
+            }
+          })
+        } catch (e) {
+          console.log(e)
+        }
       }, 1000);
     })
   }

@@ -1,8 +1,8 @@
 <template>
-  <div class="md:flex justify-between" v-if="image">
-    <div class="mx-auto px-4 pt-4">
+  <div class="md:grid lg:grid-cols-3 xl:grid-cols-4" v-if="image">
+    <div class="lg:col-span-2 xl:col-span-3 w-full px-4 pt-4">
 
-      <img class="h-auto md:h-[70vh] lg:h-[80vh] xl:h-[88vh] mx-auto object-contain rounded" :src="image?.image.url" alt="">
+      <img class="h-auto mx-auto object-contain rounded" :src="image?.image.url" alt="">
       <div class="flex justify-between mt-2">
         <Button class="disabled:text-gray-200 text-blue-500" :disabled="!prevImage"
                 @click="navigateTo(`/image/${prevImage?.url}`)">Forrige
@@ -14,7 +14,7 @@
 
     </div>
 
-    <div class="w-full md:w-72 p-4 md:h-[94vh] bg-gray-100 md:overflow-y-auto">
+    <div class="mt-2 lg:mt-0 p-4 bg-gray-100 lg:overflow-y-auto h-auto">
       <div class="grid">
         <h1 class="font-bold">{{ image?.title }}</h1>
         <p class="text-sm">{{ image?.description }}</p>
@@ -39,7 +39,7 @@
         <form @submit.prevent="postComment" class="grid gap-2 text-sm">
           <textarea v-model="comment" required class="w-full border-2 rounded-lg p-2" rows="3"
                     placeholder="Skriv en kommentar"></textarea>
-          <input v-model="name" required type="text" placeholder="Navn" class="w-full border-2 rounded-lg p-2">
+          <input :disabled="user" v-model="name" required type="text" placeholder="Navn" class="w-full border-2 rounded-lg p-2">
           <Button type="submit">Lagre</Button>
         </form>
       </div>
@@ -65,12 +65,10 @@
 <script setup lang="ts">
 
 import MasonryAlbum from "~/components/MasonryAlbum.vue";
-import Modal from "~/components/Modal.vue";
 import Button from "~/components/Button.vue";
-import {ca} from "cronstrue/dist/i18n/locales/ca";
 
 const image = ref();
-const { update, findOne } = useStrapi()
+const { update, findOne, create } = useStrapi()
 const nextImage = ref<string>();
 const prevImage = ref<string>();
 const route = useRoute();
@@ -80,7 +78,7 @@ const user = useState('user')
 const editMode = useState('editMode')
 
 const comment = ref<string>('');
-const name = ref<string>('');
+const name = ref<string>(user.value?.firstName ?? '');
 const commentSaved = ref<boolean>(false);
 const error = ref<boolean>(false);
 
@@ -97,15 +95,11 @@ try {
 
 const postComment = async () => {
   try {
-    const {data} = await $fetch('/api/comments', {
-      method: 'POST',
-      body: JSON.stringify({
-        data: {
+    const {data} = await create('comments', {
           comment: comment.value,
           name: name.value,
-          image: image.value.id
-        }
-      })
+          image: image.value.id,
+          user: user.value?.documentId
     })
     commentSaved.value = true;
     image.value.comments.push(data);

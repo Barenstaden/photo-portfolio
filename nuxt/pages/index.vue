@@ -57,18 +57,25 @@ const {update} = useStrapi()
 
 const albums = ref<ApiAlbumAlbum[]>([]);
 const images = ref();
-try {
-  const {data} = await find<ApiAlbumAlbum>(`albums`, {
-    sort: 'order'
-  })
-  albums.value = data;
-} catch (e) {
-  console.log(e)
+const fetchAlbums = async () => {
+  try {
+    const {data} = await find<ApiAlbumAlbum>(`albums`, {
+      sort: 'order'
+    })
+    albums.value = data;
+  } catch (e) {
+    console.log(e)
+  }
 }
+fetchAlbums();
 
 const container = ref<HTMLDivElement | null>(null)
-watch(editMode, () => {
-  if(editMode.value) initSwapy();
+watch(editMode, async () => {
+  if(editMode.value) {
+    initSwapy();
+  } else {
+    await fetchAlbums()
+  }
 })
 const initSwapy = async () => {
   await nextTick();

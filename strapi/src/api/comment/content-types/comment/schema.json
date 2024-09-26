@@ -23,6 +23,12 @@
       "relation": "manyToOne",
       "target": "api::image.image",
       "inversedBy": "comments"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "comments"
     }
   }
 }

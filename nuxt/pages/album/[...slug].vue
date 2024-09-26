@@ -24,13 +24,24 @@ import Button from "~/components/Button.vue";
 
 const { findOne } = useStrapi();
 const route = useRoute();
+const editMode = useState('editMode')
 
 const album = ref();
 const page = ref(6);
-try {
-  const {data} = await findOne<ApiAlbumAlbum>(`albums`, route.params.slug[0])
-  album.value = data;
-} catch (e) {
-  // console.log(e)
+const fetchAlbum = async () => {
+  try {
+    const {data} = await findOne<ApiAlbumAlbum>(`albums`, route.params.slug[0])
+    album.value = data;
+  } catch (e) {
+    // console.log(e)
+  }
 }
+
+await fetchAlbum();
+
+watch(editMode, async () => {
+  if (!editMode.value) {
+    await fetchAlbum()
+  }
+})
 </script>
