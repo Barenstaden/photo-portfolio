@@ -16,6 +16,7 @@
 
     <div class="mt-2 lg:mt-0 p-4 bg-gray-100 lg:overflow-y-auto h-auto">
       <div class="grid">
+        <p v-if="image?.description" class="text-sm">{{ image?.description }}</p>
         <NuxtLink :to="`/album/${image?.album.url}`" class="text-blue-500">{{image?.album.title}}</NuxtLink>
       </div>
       <Button v-if="user?.role.type === 'owner' && editMode" :disabled="image?.documentId === image?.album.cover?.documentId" @click="setCoverImage" class="mt-2">Sett som hovedbilde</Button>
