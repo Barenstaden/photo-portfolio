@@ -1,17 +1,50 @@
 // @ts-ignore
+const strapiUrl = process.env.STRAPI_URL || 'http://localhost:1337'
+const publicStrapiUrl = process.env.STRAPI_PUBLIC_URL || strapiUrl
+
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
-      baseURL: process.env.STRAPI_URL || 'https://localhost:1337',
+      baseURL: publicStrapiUrl,
       strapi: { // nuxt/strapi options available client-side
-        url: process.env.STRAPI_URL || 'https://localhost:1337'
+        url: publicStrapiUrl
       }
     },
   },
 
   routeRules: {
+    '/api': {
+      proxy: `${strapiUrl}/api`
+    },
+    '/api/**': {
+      proxy: `${strapiUrl}/api/**`
+    },
+    '/admin': {
+      proxy: `${strapiUrl}/admin`
+    },
+    '/admin/**': {
+      proxy: `${strapiUrl}/admin/**`
+    },
+    '/content-manager/**': {
+      proxy: `${strapiUrl}/content-manager/**`
+    },
+    '/content-type-builder/**': {
+      proxy: `${strapiUrl}/content-type-builder/**`
+    },
+    '/email/**': {
+      proxy: `${strapiUrl}/email/**`
+    },
+    '/i18n/**': {
+      proxy: `${strapiUrl}/i18n/**`
+    },
+    '/upload/**': {
+      proxy: `${strapiUrl}/upload/**`
+    },
+    '/users-permissions/**': {
+      proxy: `${strapiUrl}/users-permissions/**`
+    },
     '/uploads/**': {
-      proxy: `${process.env.STRAPI_URL}/uploads/**`
+      proxy: `${strapiUrl}/uploads/**`
     }
   },
 
@@ -32,7 +65,7 @@ export default defineNuxtConfig({
 
   modules: ['@nuxtjs/strapi'],
   strapi: {
-    url: process.env.STRAPI_URL || 'http://localhost:1337',
+    url: publicStrapiUrl,
     prefix: '/api',
     admin: '/admin',
     version: 'v4',

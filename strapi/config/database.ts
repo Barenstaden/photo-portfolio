@@ -2,6 +2,7 @@ import path from 'path';
 
 export default ({ env }) => {
   const client = env('DATABASE_CLIENT', 'sqlite');
+  const databaseFilename = env('DATABASE_FILENAME', '.tmp/data.db');
 
   const connections = {
     mysql: {
@@ -67,12 +68,9 @@ export default ({ env }) => {
     },
     sqlite: {
       connection: {
-        filename: path.join(
-          __dirname,
-          '..',
-          '..',
-          env('DATABASE_FILENAME', '.tmp/data.db')
-        ),
+        filename: path.isAbsolute(databaseFilename)
+          ? databaseFilename
+          : path.join(__dirname, '..', '..', databaseFilename),
       },
       useNullAsDefault: true,
     },

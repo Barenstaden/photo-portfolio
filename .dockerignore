@@ -1,0 +1,11 @@
+.git
+.idea
+**/node_modules
+**/.nuxt
+**/.output
+**/dist
+**/.tmp
+**/.strapi
+**/.strapi-updater.json
+**/.env
+**/.DS_Store

@@ -1,0 +1,41 @@
+app = "portfolio-pappa-frontend"
+primary_region = "ams"
+
+[build]
+  dockerfile = "Dockerfile.frontend"
+
+  [build.args]
+    STRAPI_PUBLIC_URL = "https://oyvindbjornstad.no"
+    STRAPI_URL = "https://portfolio-pappa-backend.fly.dev"
+
+[env]
+  HOST = "0.0.0.0"
+  NITRO_HOST = "0.0.0.0"
+  NITRO_PORT = "3000"
+  NODE_ENV = "production"
+  PORT = "3000"
+  STRAPI_PUBLIC_URL = "https://oyvindbjornstad.no"
+  STRAPI_URL = "https://portfolio-pappa-backend.fly.dev"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 3000
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+  [[services.tcp_checks]]
+    interval = "15s"
+    timeout = "10s"
+    grace_period = "30s"
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

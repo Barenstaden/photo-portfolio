@@ -20,10 +20,27 @@
   <slot/>
 </template>
 <script setup lang="ts">
+  import type {ApiCommentComment} from "../../strapi/types/generated/contentTypes";
+
+  const { find } = useStrapi();
   const user = useState('user')
   const editMode = useState('editMode');
   const route = useRoute();
   const {logout} = useStrapiAuth()
+  const notifications = ref();
+
+  try {
+    const { data } = await find<ApiCommentComment>('comments', {
+      filters: {
+        read: {
+          $eq: false
+        }
+      }
+    })
+    notifications.value = data;
+  } catch (e) {
+    notifications.value = [];
+  }
 
   const submitLogout = async () => {
     user.value = null;

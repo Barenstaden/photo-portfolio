@@ -29,6 +29,10 @@
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "comments"
+    },
+    "read": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

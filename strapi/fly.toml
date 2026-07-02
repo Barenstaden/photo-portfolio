@@ -1,0 +1,40 @@
+app = "portfolio-pappa-backend"
+primary_region = "ams"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  DATABASE_CLIENT = "sqlite"
+  DATABASE_FILENAME = "/data/data.db"
+  HOST = "0.0.0.0"
+  NODE_ENV = "production"
+  PORT = "1337"
+  PUBLIC_URL = "https://oyvindbjornstad.no"
+
+[[mounts]]
+  source = "portfolio_pappa_data"
+  destination = "/data"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 1337
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+  [[services.tcp_checks]]
+    interval = "15s"
+    timeout = "10s"
+    grace_period = "1m0s"
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1
