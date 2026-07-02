@@ -1,6 +1,6 @@
 export const fixComments = async () =>  {
   const oldUrl = 'http://161.35.212.50/s';
-  const newUrl = 'https://oyvindbjornstad.no/api'
+  const newUrl = 'https://api.oyvindbjornstad.no/api'
   const oldComments = await $fetch(`${oldUrl}/comments?_limit=300`);
   const {data: newComments} = await $fetch(`${newUrl}/comments?filters[name][$eq]=&pagination[limit]=300&populate=*`);
   console.log(newComments)

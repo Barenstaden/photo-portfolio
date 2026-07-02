@@ -12,42 +12,6 @@ export default defineNuxtConfig({
     },
   },
 
-  routeRules: {
-    '/api': {
-      proxy: `${strapiUrl}/api`
-    },
-    '/api/**': {
-      proxy: `${strapiUrl}/api/**`
-    },
-    '/admin': {
-      proxy: `${strapiUrl}/admin`
-    },
-    '/admin/**': {
-      proxy: `${strapiUrl}/admin/**`
-    },
-    '/content-manager/**': {
-      proxy: `${strapiUrl}/content-manager/**`
-    },
-    '/content-type-builder/**': {
-      proxy: `${strapiUrl}/content-type-builder/**`
-    },
-    '/email/**': {
-      proxy: `${strapiUrl}/email/**`
-    },
-    '/i18n/**': {
-      proxy: `${strapiUrl}/i18n/**`
-    },
-    '/upload/**': {
-      proxy: `${strapiUrl}/upload/**`
-    },
-    '/users-permissions/**': {
-      proxy: `${strapiUrl}/users-permissions/**`
-    },
-    '/uploads/**': {
-      proxy: `${strapiUrl}/uploads/**`
-    }
-  },
-
   devServer: {
     host: 'localhost',
     port: 3000,

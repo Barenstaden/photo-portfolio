@@ -24,7 +24,9 @@ export default factories.createCoreController('api::image.image', ({strapi}) => 
         },
         populate: {
           image: true,
-          comments: true,
+          comments: {
+            sort: ['createdAt:desc'],
+          },
           album: {
             populate: {
               images: {

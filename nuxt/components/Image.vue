@@ -18,6 +18,7 @@
 
 <script lang="ts" setup>
 import type {Media} from '../../strapi/node_modules/@strapi/types/dist/schema/attribute';
+import {useStrapiMediaUrl} from "#imports";
 
 const props = withDefaults(defineProps<{
   image?: Media,
@@ -36,6 +37,8 @@ const props = withDefaults(defineProps<{
   interactive: false
 })
 
+const mediaUrl = useStrapiMediaUrl();
+
 const selectedFormat = computed(() => {
   const source = props.image as any;
   const formats = source?.formats ?? {};
@@ -47,7 +50,7 @@ const selectedFormat = computed(() => {
     ?? source;
 })
 
-const imageUrl = computed(() => selectedFormat.value?.url ?? (props.image as any)?.url)
+const imageUrl = computed(() => mediaUrl(selectedFormat.value?.url ?? (props.image as any)?.url))
 
 const fitClass = computed(() => props.fit === 'contain' ? 'object-contain' : 'object-cover')
 

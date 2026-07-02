@@ -5,8 +5,8 @@ primary_region = "ams"
   dockerfile = "Dockerfile"
 
   [build.args]
-    STRAPI_PUBLIC_URL = "https://oyvindbjornstad.no"
-    STRAPI_URL = "https://portfolio-pappa-backend.fly.dev"
+    STRAPI_PUBLIC_URL = "https://api.oyvindbjornstad.no"
+    STRAPI_URL = "https://api.oyvindbjornstad.no"
 
 [env]
   HOST = "0.0.0.0"
@@ -14,8 +14,8 @@ primary_region = "ams"
   NITRO_PORT = "3000"
   NODE_ENV = "production"
   PORT = "3000"
-  STRAPI_PUBLIC_URL = "https://oyvindbjornstad.no"
-  STRAPI_URL = "https://portfolio-pappa-backend.fly.dev"
+  STRAPI_PUBLIC_URL = "https://api.oyvindbjornstad.no"
+  STRAPI_URL = "https://api.oyvindbjornstad.no"
 
 [[services]]
   protocol = "tcp"

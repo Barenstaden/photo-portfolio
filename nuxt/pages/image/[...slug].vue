@@ -31,7 +31,7 @@
                 >
                   <img
                     class="h-full max-h-[64svh] max-w-full cursor-zoom-in object-contain sm:h-auto sm:w-auto sm:max-h-[calc(100svh-7rem)] sm:shadow-[0_8px_16px_rgba(15,23,42,0.28)]"
-                    :src="prevImage.image.url"
+                    :src="mediaUrl(prevImage.image.url)"
                     :alt="prevImage.title ?? ''"
                     @click="openFullScreenFromImage"
                   >
@@ -41,7 +41,7 @@
                 <div class="inline-flex max-h-[64svh] max-w-full sm:max-h-[calc(100svh-7rem)]">
                   <img
                     class="h-full max-h-[64svh] max-w-full cursor-zoom-in object-contain sm:h-auto sm:w-auto sm:max-h-[calc(100svh-7rem)] sm:shadow-[0_8px_16px_rgba(15,23,42,0.28)]"
-                    :src="image?.image.url"
+                    :src="mediaUrl(image?.image.url)"
                     :alt="image?.title ?? ''"
                     @click="openFullScreenFromImage"
                   >
@@ -54,7 +54,7 @@
                 >
                   <img
                     class="h-full max-h-[64svh] max-w-full cursor-zoom-in object-contain sm:h-auto sm:w-auto sm:max-h-[calc(100svh-7rem)] sm:shadow-[0_8px_16px_rgba(15,23,42,0.28)]"
-                    :src="nextImage.image.url"
+                    :src="mediaUrl(nextImage.image.url)"
                     :alt="nextImage.title ?? ''"
                     @click="openFullScreenFromImage"
                   >
@@ -99,20 +99,76 @@
         class="min-h-0 overflow-y-auto bg-white p-4 shadow-sm ring-1 ring-black/5 sm:rounded-2xl sm:p-5 sm:shadow-xl lg:max-h-[calc(100vh-5rem)]"
       >
         <div class="grid gap-3">
-          <NuxtLink :to="`/album/${image?.album.url}`" class="text-sm font-medium text-blue-600 hover:text-blue-800">
-            {{image?.album.title}}
+          <NuxtLink :to="`/album/${currentAlbumUrl}`" class="text-sm font-medium text-blue-600 hover:text-blue-800">
+            Til albumet
           </NuxtLink>
           <p v-if="image?.description" class="text-sm leading-6 text-gray-600">{{ image?.description }}</p>
         </div>
 
-        <Button
-          v-if="user?.role.type === 'owner' && editMode"
-          :disabled="image?.documentId === image?.album.cover?.documentId"
-          @click="setCoverImage"
-          class="mt-4"
-        >
-          Sett som hovedbilde
-        </Button>
+        <div v-if="isOwner" class="mt-4">
+          <Button v-if="!imageEditOpen" @click="imageEditOpen = true">
+            Rediger info
+          </Button>
+
+          <div v-else class="grid gap-4 rounded-xl bg-gray-50 p-4 text-sm">
+            <div class="flex items-center justify-between gap-3">
+              <p class="font-semibold text-gray-900">Rediger bilde</p>
+              <button
+                type="button"
+                class="rounded-full bg-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-300"
+                @click="imageEditOpen = false"
+              >
+                Lukk
+              </button>
+            </div>
+
+            <Button
+              :disabled="image?.documentId === image?.album.cover?.documentId"
+              @click="setCoverImage"
+            >
+              Sett som hovedbilde
+            </Button>
+
+            <form class="grid gap-3" @submit.prevent="saveImageDetails">
+              <label class="grid gap-2 font-medium text-gray-700">
+                Beskrivelse
+                <textarea
+                  v-model="editingDescription"
+                  rows="5"
+                  class="w-full rounded-xl border border-gray-200 p-3 font-normal outline-none transition focus:border-gray-400"
+                ></textarea>
+              </label>
+              <label class="grid gap-2 font-medium text-gray-700">
+                Album
+                <select
+                  v-model="selectedImageAlbumDocumentId"
+                  class="w-full rounded-xl border border-gray-200 p-3 font-normal outline-none transition focus:border-gray-400"
+                >
+                  <option v-for="albumOption in ownerAlbums" :key="albumOption.documentId" :value="albumOption.documentId">
+                    {{ albumOption.title }}
+                  </option>
+                </select>
+              </label>
+              <Button type="submit" :disabled="savingImageDetails">
+                {{ savingImageDetails ? 'Lagrer...' : 'Lagre bildeinfo' }}
+              </Button>
+              <p v-if="imageDetailsStatus" class="text-xs text-gray-500">{{ imageDetailsStatus }}</p>
+            </form>
+
+            <div class="rounded-xl border border-red-200 bg-red-50 p-4">
+              <p class="text-sm font-semibold text-red-800">Slett bilde</p>
+              <p class="mt-1 text-sm text-red-700">Bildet fjernes fra albumet og portfolioen.</p>
+              <button
+                type="button"
+                class="mt-3 rounded-full bg-red-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-800 disabled:cursor-not-allowed disabled:bg-red-300"
+                :disabled="deletingImage"
+                @click="deleteCurrentImage"
+              >
+                {{ deletingImage ? 'Sletter...' : 'Slett dette bildet' }}
+              </button>
+            </div>
+          </div>
+        </div>
 
         <div class="mt-6 text-gray-700">
           <h2 class="text-base font-semibold text-gray-900">Kommentarer</h2>
@@ -127,6 +183,26 @@
             >
               <p class="leading-6 text-gray-700">{{ comment.comment }}</p>
               <p class="mt-2 text-xs font-semibold text-gray-500">- {{ comment.name }}</p>
+              <div v-if="comment.answer" class="mt-3 rounded-lg bg-white p-3 ring-1 ring-black/5">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Svar</p>
+                <p class="mt-1 whitespace-pre-line leading-6 text-gray-700">{{ comment.answer }}</p>
+              </div>
+              <form
+                v-else-if="isOwner"
+                class="mt-3 grid gap-2"
+                @submit.prevent="saveCommentReply(comment)"
+              >
+                <textarea
+                  v-model="replyDrafts[comment.documentId ?? comment.id]"
+                  required
+                  rows="3"
+                  class="w-full rounded-lg border border-gray-200 p-3 outline-none transition focus:border-gray-400"
+                  placeholder="Skriv svar"
+                ></textarea>
+                <Button type="submit" :disabled="savingReplyId === (comment.documentId ?? comment.id)">
+                  {{ savingReplyId === (comment.documentId ?? comment.id) ? 'Lagrer...' : 'Svar' }}
+                </Button>
+              </form>
             </div>
           </div>
         </div>
@@ -203,7 +279,7 @@
               <img
                 v-if="prevImage?.image?.url"
                 class="h-full max-h-[calc(100svh-3rem)] max-w-full object-contain sm:max-h-[calc(100vh-4rem)]"
-                :src="prevImage.image.url"
+                :src="mediaUrl(prevImage.image.url)"
                 :alt="prevImage.title ?? ''"
                 @click="showMobileNavigationControlsFromImage"
               >
@@ -211,7 +287,7 @@
             <div class="grid h-full w-full shrink-0 place-items-center">
               <img
                 class="h-full max-h-[calc(100svh-3rem)] max-w-full object-contain sm:max-h-[calc(100vh-4rem)]"
-                :src="image?.image.url"
+                :src="mediaUrl(image?.image.url)"
                 :alt="image?.title ?? ''"
                 @click="showMobileNavigationControlsFromImage"
               >
@@ -220,7 +296,7 @@
               <img
                 v-if="nextImage?.image?.url"
                 class="h-full max-h-[calc(100svh-3rem)] max-w-full object-contain sm:max-h-[calc(100vh-4rem)]"
-                :src="nextImage.image.url"
+                :src="mediaUrl(nextImage.image.url)"
                 :alt="nextImage.title ?? ''"
                 @click="showMobileNavigationControlsFromImage"
               >
@@ -283,8 +359,8 @@
             </button>
           </div>
           <div class="grid gap-3">
-            <NuxtLink :to="`/album/${image?.album.url}`" class="text-sm font-medium text-blue-600 hover:text-blue-800">
-              {{image?.album.title}}
+            <NuxtLink :to="`/album/${currentAlbumUrl}`" class="text-sm font-medium text-blue-600 hover:text-blue-800">
+              Til albumet
             </NuxtLink>
             <p v-if="image?.description" class="text-sm leading-6 text-gray-600">{{ image?.description }}</p>
           </div>
@@ -302,6 +378,26 @@
               >
                 <p class="leading-6 text-gray-700">{{ comment.comment }}</p>
                 <p class="mt-2 text-xs font-semibold text-gray-500">- {{ comment.name }}</p>
+                <div v-if="comment.answer" class="mt-3 rounded-lg bg-white p-3 ring-1 ring-black/5">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Svar</p>
+                  <p class="mt-1 whitespace-pre-line leading-6 text-gray-700">{{ comment.answer }}</p>
+                </div>
+                <form
+                  v-else-if="isOwner"
+                  class="mt-3 grid gap-2"
+                  @submit.prevent="saveCommentReply(comment)"
+                >
+                  <textarea
+                    v-model="replyDrafts[comment.documentId ?? comment.id]"
+                    required
+                    rows="3"
+                    class="w-full rounded-lg border border-gray-200 p-3 outline-none transition focus:border-gray-400"
+                    placeholder="Skriv svar"
+                  ></textarea>
+                  <Button type="submit" :disabled="savingReplyId === (comment.documentId ?? comment.id)">
+                    {{ savingReplyId === (comment.documentId ?? comment.id) ? 'Lagrer...' : 'Svar' }}
+                  </Button>
+                </form>
               </div>
             </div>
           </div>
@@ -347,15 +443,18 @@
 import MasonryAlbum from "~/components/MasonryAlbum.vue";
 import Button from "~/components/Button.vue";
 import type { ApiAlbumAlbum } from "../../../strapi/types/generated/contentTypes";
+import { useStrapiMediaUrl } from "#imports";
 
 const image = ref();
-const { update, findOne, create } = useStrapi()
+const { update, find, findOne, create, delete: deleteEntry } = useStrapi()
 const nextImage = ref<GalleryImage | null>(null);
 const prevImage = ref<GalleryImage | null>(null);
 const currentImageIndex = ref(0);
 const route = useRoute();
 const user = useState('user')
-const editMode = useState('editMode')
+const mediaUrl = useStrapiMediaUrl()
+const isOwner = computed(() => user.value?.role?.type === 'owner')
+const imageEditOpen = ref(false)
 const galleryCount = computed(() => Math.max(image.value?.album?.images?.length ?? 1, 1))
 const commentCount = computed(() => image.value?.comments?.length ?? 0)
 const commentLabel = computed(() => `${commentCount.value} ${commentCount.value === 1 ? 'kommentar' : 'kommentarer'}`)
@@ -381,6 +480,16 @@ const comment = ref<string>('');
 const name = ref<string>(user.value?.firstName ?? '');
 const commentSaved = ref<boolean>(false);
 const error = ref<boolean>(false);
+const replyDrafts = reactive<Record<string, string>>({});
+const savingReplyId = ref<string | number | null>(null);
+const ownerAlbums = ref<Array<{ documentId: string, title: string, url: string }>>([]);
+const selectedImageAlbumDocumentId = ref('');
+const currentAlbumUrl = ref('');
+const originalAlbumUrl = ref('');
+const editingDescription = ref('');
+const savingImageDetails = ref(false);
+const imageDetailsStatus = ref('');
+const deletingImage = ref(false);
 
 interface GalleryImage {
   id: number
@@ -408,6 +517,10 @@ const imageTrackClass = computed(() => {
 try {
   const {data} = await findOne('images', route.params.slug[0])
   image.value = data;
+  editingDescription.value = image.value.description ?? '';
+  selectedImageAlbumDocumentId.value = image.value.album?.documentId ?? '';
+  currentAlbumUrl.value = image.value.album?.url ?? '';
+  originalAlbumUrl.value = image.value.album?.url ?? '';
   const images = image.value.album?.images ?? [];
   const imageIndex = images.findIndex(img => img.id === image.value.id);
   currentImageIndex.value = imageIndex >= 0 ? imageIndex : 0;
@@ -416,6 +529,28 @@ try {
 } catch (e) {
   image.value = null;
 }
+
+if (isOwner.value) {
+  try {
+    const { data } = await find('albums', {
+      sort: 'order',
+      pagination: {
+        limit: 100
+      }
+    })
+
+    ownerAlbums.value = data as Array<{ documentId: string, title: string, url: string }>;
+  } catch (e) {
+    ownerAlbums.value = [];
+  }
+}
+
+const syncCurrentAlbumUrl = () => {
+  const selectedAlbum = ownerAlbums.value.find(album => album.documentId === selectedImageAlbumDocumentId.value)
+  currentAlbumUrl.value = selectedAlbum?.url ?? originalAlbumUrl.value
+}
+
+watch([selectedImageAlbumDocumentId, ownerAlbums], syncCurrentAlbumUrl, { immediate: true })
 
 const showFullScreenControls = () => {
   controlsVisible.value = true;
@@ -754,6 +889,84 @@ const postComment = async () => {
     image.value.comments.push(data);
   } catch (e) {
     error.value = true;
+  }
+}
+
+const saveCommentReply = async (commentItem: any) => {
+  const commentId = commentItem.documentId ?? commentItem.id;
+  const reply = replyDrafts[commentId]?.trim();
+  if (!reply) return;
+
+  savingReplyId.value = commentId;
+
+  try {
+    await update('comments', commentId, {
+      answer: reply,
+      answeredAt: new Date().toISOString(),
+      read: true
+    })
+
+    commentItem.answer = reply;
+    replyDrafts[commentId] = '';
+  } finally {
+    savingReplyId.value = null;
+  }
+}
+
+const saveImageDetails = async () => {
+  if (!image.value?.documentId) return;
+
+  savingImageDetails.value = true;
+  imageDetailsStatus.value = '';
+
+  try {
+    await update('images', image.value.documentId, {
+      description: editingDescription.value,
+      album: selectedImageAlbumDocumentId.value
+    })
+
+    image.value.description = editingDescription.value;
+    const selectedAlbum = ownerAlbums.value.find(album => album.documentId === selectedImageAlbumDocumentId.value)
+    currentAlbumUrl.value = selectedAlbum?.url ?? currentAlbumUrl.value;
+    imageDetailsStatus.value = 'Bildeinfo er lagret.';
+  } catch (e) {
+    imageDetailsStatus.value = 'Kunne ikke lagre bildeinfo.';
+  } finally {
+    savingImageDetails.value = false;
+  }
+}
+
+const deleteCurrentImage = async () => {
+  if (!image.value?.documentId || deletingImage.value) return;
+  if (!window.confirm('Slette dette bildet? Dette kan ikke angres.')) return;
+
+  deletingImage.value = true;
+
+  try {
+    const replacementImage = nextImage.value ?? prevImage.value;
+    const albumUrlToUse = currentAlbumUrl.value || originalAlbumUrl.value;
+
+    if (image.value.documentId === image.value.album?.cover?.documentId) {
+      await update<ApiAlbumAlbum>('albums', image.value.album.documentId, {
+        cover: replacementImage?.documentId ?? null
+      })
+    }
+
+    await deleteEntry('images', image.value.documentId);
+
+    if (replacementImage?.url) {
+      await navigateTo(`/image/${replacementImage.url}`);
+      return;
+    }
+
+    if (albumUrlToUse) {
+      await navigateTo(`/album/${albumUrlToUse}`);
+      return;
+    }
+
+    await navigateTo('/');
+  } finally {
+    deletingImage.value = false;
   }
 }
 

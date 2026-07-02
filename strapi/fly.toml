@@ -10,7 +10,7 @@ primary_region = "ams"
   HOST = "0.0.0.0"
   NODE_ENV = "production"
   PORT = "1337"
-  PUBLIC_URL = "https://oyvindbjornstad.no"
+  PUBLIC_URL = "https://api.oyvindbjornstad.no"
 
 [[mounts]]
   source = "portfolio_pappa_data"
